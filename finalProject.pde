@@ -1,6 +1,7 @@
 // Diego Valdez and Patrick Seminatore
 // CPSC 313
 
+import java.util.*;
 import de.fhpotsdam.unfolding.*;
 import de.fhpotsdam.unfolding.core.*;
 import de.fhpotsdam.unfolding.data.*;
@@ -30,6 +31,16 @@ void setup() {
     MapUtils.createDefaultEventDispatcher(this, map);
     map.setPanningRestriction(USAlocation, maxPanningDistance);
     map.setZoomRange(3, 4);
+    
+    List<Marker> stateMarkers = new ArrayList<Marker>();
+    List<Feature> states = GeoJSONReader.loadData(this, "usStates.geo.json");
+    //List<Marker> markers = MapUtils.createSimpleMarkers(features);
+    //map.addMarkers(markers);
+    //markers.setStrokeWeight(20);
+    
+    //for (Feature feature : states){
+    //    
+    //}
 }
 
 void draw() {
