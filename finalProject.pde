@@ -23,29 +23,49 @@ UnfoldingMap map;
 
 // Sets up the canvas and loads in the csv document
 void setup() {
+    map = new UnfoldingMap(this);
+    map.setBackgroundColor(240);
+    MapUtils.createDefaultEventDispatcher(this, map);
     Location USAlocation = new Location(39.8f, -98.58f);
     float maxPanningDistance = 0;
-    size(800, 600);
-    map = new UnfoldingMap(this);
-    map.zoomAndPanTo(USAlocation, 4);
+    size(1600, 1200, P2D);
+    map.zoomAndPanTo(USAlocation, 5);
     MapUtils.createDefaultEventDispatcher(this, map);
-    map.setPanningRestriction(USAlocation, maxPanningDistance);
-    map.setZoomRange(3, 4);
+    //map.setPanningRestriction(USAlocation, maxPanningDistance);
+    map.setZoomRange(1, 5);
     
-    List<Marker> stateMarkers = new ArrayList<Marker>();
     List<Feature> states = GeoJSONReader.loadData(this, "usStates.geo.json");
-    //List<Marker> markers = MapUtils.createSimpleMarkers(features);
-    //map.addMarkers(markers);
-    //markers.setStrokeWeight(20);
-    
-    //for (Feature feature : states){
-    //    
-    //}
+    System.out.println(states.size());
+    List<Marker>stateMarkers = MapUtils.createSimpleMarkers(states);
+    map.addMarkers(stateMarkers);
+
+    int colorNum = 0;
+    for (Marker marker : stateMarkers){
+       if (colorNum == 0){
+         marker.setColor(color(255, 0, 0));
+         colorNum++;
+       }
+       else if (colorNum == 1){
+         marker.setColor(color(0, 255, 0));
+         colorNum++;
+       }
+       else if (colorNum == 2){
+         marker.setColor(color(0, 0, 255));
+         colorNum++;
+       }
+       else if (colorNum == 3){
+         marker.setColor(color(230, 230, 0));
+         colorNum = 0;
+       }
+       
+       
+    }
+
 }
 
 void draw() {
     map.draw();
     Location location = map.getLocation(mouseX, mouseY);
-    fill(0);
+    fill(0,0,0);
     text(location.getLat() + ", " + location.getLon(), mouseX, mouseY);
 }
