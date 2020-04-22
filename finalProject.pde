@@ -38,7 +38,13 @@ void setup() {
     System.out.println(states.size());
     List<Marker>stateMarkers = MapUtils.createSimpleMarkers(states);
     map.addMarkers(stateMarkers);
+    colorStates(stateMarkers);
 
+}
+
+
+// Need to figure out a color scheme so that no two colors are adjacent
+void colorStates(List<Marker> stateMarkers){
     int colorNum = 0;
     for (Marker marker : stateMarkers){
        if (colorNum == 0){
@@ -57,10 +63,7 @@ void setup() {
          marker.setColor(color(230, 230, 0));
          colorNum = 0;
        }
-       
-       
     }
-
 }
 
 void draw() {
