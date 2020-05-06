@@ -22,7 +22,9 @@ import de.fhpotsdam.utils.*;
 
 Table beerData;
 List<Feature> states;
+List<Marker>stateMarkers;
 UnfoldingMap map;
+//DebugDisplay detailedViz;
 
 int currentYear = 2011;
 
@@ -39,12 +41,17 @@ void setup() {
     map.setPanningRestriction(USAlocation, maxPanningDistance);
     map.setZoomRange(4, 5);
     
+    //detailedViz = new DebugDisplay(this, map, 10,10);
+    
     // Load in beer data
     beerData = loadTable("beer_states.csv", "header");
     
     // Load in state data
     states = GeoJSONReader.loadData(this, "usStates.geo.json");
-   
+    stateMarkers = MapUtils.createSimpleMarkers(states);
+    map.addMarkers(stateMarkers);
+    Iterable<TableRow> beerDataCurrentYear = beerData.findRows(Integer.toString(currentYear), "year");
+    colorStates(states, beerDataCurrentYear);
 
 }
 
@@ -59,14 +66,11 @@ void draw() {
     text(location.getLat() + ", " + location.getLon(), mouseX, mouseY);
     textSize(48);
     text(currentYear, 704.0, 100.0);
-    Iterable<TableRow> beerDataCurrentYear = beerData.findRows(Integer.toString(currentYear), "year");
-    colorStates(states, beerDataCurrentYear);
+    
 }
 
 // Need to figure out a color scheme so that no two colors are adjacent
 void colorStates(List<Feature> states, Iterable<TableRow> stateBeerCurrentYear){
-    List<Marker>stateMarkers = MapUtils.createSimpleMarkers(states);
-    map.addMarkers(stateMarkers);
     float maxBeer = findMax();
     for (Marker marker : stateMarkers){
       String stateName = marker.getStringProperty("name"); //<>//
@@ -108,10 +112,8 @@ float findMax(){
              maxBeer = currentBeer;
           }
         }
-     }
-            
+     }    
     }
-     
      return maxBeer;
 }
 
@@ -124,17 +126,39 @@ float scaleColor(float maxBeer, float currentStateBeer){
     return 255 - scaledColor;
 }
 
+public void mouseClicked() {
+    Location mouseLocation = map.getLocation(mouseX, mouseY);
+    List<Marker>stateMarkers = MapUtils.createSimpleMarkers(states);
+    MarkerManager<Marker> stateManager = new MarkerManager<Marker>();
+    stateManager.addMarkers(stateMarkers);
+    Marker selectedMarker = map.getFirstHitMarker(mouseX, mouseY);
+    for (Marker marker : map.getMarkers()) {
+            marker.setStrokeWeight(1);
+            marker.setSelected(false);
+        }
+    if (selectedMarker != null) {
+       selectedMarker.setStrokeWeight(4);
+       selectedMarker.setSelected(true);
+    }
+}
+
 // Changes the year based on arrow pressed
 void keyPressed(){
   if (key == CODED){
     if (keyCode == LEFT){
-      if (currentYear == 2008)
-        currentYear = 2007;
+      if (currentYear == 2008){
+        currentYear = 2019;
+        Iterable<TableRow> beerDataCurrentYear = beerData.findRows(Integer.toString(currentYear), "year");
+        colorStates(states, beerDataCurrentYear);
+      }
       else currentYear -= 1;
     }
     else if (keyCode == RIGHT){
-      if (currentYear == 2019)
+      if (currentYear == 2019){
         currentYear = 2008;
+        Iterable<TableRow> beerDataCurrentYear = beerData.findRows(Integer.toString(currentYear), "year");
+        colorStates(states, beerDataCurrentYear);
+      }
       else currentYear +=1;
     }
   }
