@@ -86,6 +86,16 @@ void draw() {
         break;
       }
     }
+
+    color c1 = color(255, scaleColor(1,0), scaleColor(1,0));
+    color c2 = color(255, scaleColor(1,1), scaleColor(1,1));
+    textSize(22);
+    text("Number of Barrels Brewed", 57, height - 120);
+    textSize(18);
+    text("0", 40, height - 20);
+    text("Most Barrels Brewed By a State for Current Year", 150, height - 20);
+    setGradient(40, height - 100, 300, 60, c1, c2, 2);
+
     
 }
 //when a state is selected this method draws the facts for the state.
@@ -231,5 +241,18 @@ void keyPressed(){
       }
       else currentYear +=1;
     }
+  }
+}
+
+//method taken from Processing api example
+void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ) {
+
+  noFill();
+
+  for (int i = x; i <= x+w; i++) {
+    float inter = map(i, x, x+w, 0, 1);
+    color c = lerpColor(c1, c2, inter);
+    stroke(c);
+    line(i, y, i, y+h);
   }
 }
